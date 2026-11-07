@@ -1,24 +1,76 @@
 @import "tailwindcss";
 
+/* Colores por ROL (no por tono): cambiar el tema es cambiar estas variables. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --fondo: #f6f7f9;
+  --superficie: #ffffff;
+  --texto: #1a1d23;
+  --secundario: #5b6170;
+  --borde: #dfe2e8;
+  --acento: #1f5fd1;
+  --acento-texto: #ffffff;
+  --bueno: #17803d;
+  --bueno-suave: #e3f4e8;
+  --malo: #b42318;
+  --malo-suave: #fbe7e5;
+  --aviso: #9a6700;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --fondo: #0f1115;
+    --superficie: #181b21;
+    --texto: #e8eaee;
+    --secundario: #a0a6b3;
+    --borde: #2c313a;
+    --acento: #6b9cff;
+    --acento-texto: #0f1115;
+    --bueno: #4cc274;
+    --bueno-suave: #15301f;
+    --malo: #ff7a6e;
+    --malo-suave: #3a1a17;
+    --aviso: #e0b44c;
   }
 }
 
+@theme inline {
+  --color-fondo: var(--fondo);
+  --color-superficie: var(--superficie);
+  --color-texto: var(--texto);
+  --color-muted: var(--secundario);
+  --color-borde: var(--borde);
+  --color-acento: var(--acento);
+  --color-acento-texto: var(--acento-texto);
+  --color-bueno: var(--bueno);
+  --color-bueno-suave: var(--bueno-suave);
+  --color-malo: var(--malo);
+  --color-malo-suave: var(--malo-suave);
+  --color-aviso: var(--aviso);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--fondo);
+  color: var(--texto);
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+@layer components {
+  .campo {
+    @apply rounded-md border border-borde bg-superficie px-3 py-2 text-texto outline-none focus:border-acento focus:ring-2 focus:ring-acento/30;
+  }
+  .boton-primario {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-acento px-4 py-2 font-medium text-acento-texto transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .boton {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-borde bg-superficie px-4 py-2 font-medium text-texto transition hover:bg-fondo disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .boton-peligro {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-malo px-4 py-2 font-medium text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  .tarjeta {
+    @apply rounded-lg border border-borde bg-superficie p-4;
+  }
+  .cifra {
+    font-variant-numeric: tabular-nums;
+  }
 }

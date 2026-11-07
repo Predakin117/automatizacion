@@ -1,11 +1,11 @@
 import { existsSync } from "node:fs";
 import path from "node:path";
 import { connection } from "next/server";
+import { exigirUsuario } from "@/lib/auth/sesion";
 
 /**
  * Diagnóstico del despliegue: convierte "no sé qué pasa en Vercel" en un JSON legible.
  * Solo devuelve booleanos y NOMBRES de variables; jamás valores.
- * (En la Fase A pasará a exigir sesión.)
  */
 
 // Variables que la app necesita (las mismas de .env.example, salvo las opcionales).
@@ -48,9 +48,11 @@ async function sharpFunciona(): Promise<{ ok: boolean; error?: string }> {
   }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   // Se ejecuta en cada petición (con cacheComponents no existe `dynamic`).
   await connection();
+  const u = await exigirUsuario(request);
+  if (u instanceof Response) return u;
 
   const faltantes = VARIABLES.filter((n) => !process.env[n]?.trim());
   const sharp = await sharpFunciona();
