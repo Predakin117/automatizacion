@@ -125,13 +125,18 @@ function dormir(ms: number) {
 
 const motor = typeof window !== "undefined" ? new MotorLotes() : null;
 
+// useSyncExternalStore compara las instantáneas por IDENTIDAD: devolver `[]` nuevo en cada
+// llamada le hace creer que el estado cambió siempre (aviso de bucle infinito en desarrollo).
+// Por eso el arreglo vacío y las funciones son constantes, definidas una sola vez.
+const NINGUNO: string[] = [];
+const sinSuscripcion = () => () => undefined;
+const instantaneaVacia = () => NINGUNO;
+const suscribirMotor = motor ? motor.suscribir : sinSuscripcion;
+const instantaneaMotor = motor ? motor.activos : instantaneaVacia;
+
 /** Lotes que el Motor está procesando (para indicadores). */
 export function useLotesActivos(): string[] {
-  return useSyncExternalStore(
-    motor ? motor.suscribir : () => () => undefined,
-    motor ? motor.activos : () => [],
-    () => [],
-  );
+  return useSyncExternalStore(suscribirMotor, instantaneaMotor, instantaneaVacia);
 }
 
 /** Se monta UNA vez en el layout (Cascaron). Muestra «Procesando N lotes…». */
