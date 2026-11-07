@@ -37,6 +37,7 @@ export async function GET(request: Request, ctx: RouteContext<"/api/procesos/[id
         estado: f.estado,
         motivos: f.motivos,
         corregidaManualmente: f.corregidaManualmente ?? false,
+        rotacionAplicada: f.rotacionAplicada ?? 0,
         esDeEsteLote: f.procesoId === id,
       });
     }

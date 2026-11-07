@@ -22,6 +22,7 @@ interface FilaFactura {
   estado: "aceptada" | "revision";
   motivos: string[];
   corregidaManualmente: boolean;
+  rotacionAplicada: number;
   esDeEsteLote: boolean;
 }
 
@@ -176,9 +177,15 @@ export function VistaProceso({ id }: { id: string }) {
                 {visibles.map((f) => (
                   <tr key={f.hash} className="border-t border-borde align-top">
                     <td className="py-2 pr-3">
-                      <a href={`/api/facturas/${f.hash}/imagen`} target="_blank" rel="noreferrer" className="text-acento hover:underline">
+                      <a
+                        href={`/api/facturas/${f.hash}/imagen${f.rotacionAplicada ? `?rotar=${f.rotacionAplicada}` : ""}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-acento hover:underline"
+                      >
                         {f.archivo}
                       </a>
+                      {f.rotacionAplicada > 0 && <div className="text-xs text-muted">↻ enderezada automáticamente ({f.rotacionAplicada}°)</div>}
                       {!f.esDeEsteLote && <div className="text-xs text-muted">ya estaba (duplicada)</div>}
                     </td>
                     <td className="cifra py-2 pr-3">{f.numero ?? "—"}</td>

@@ -18,6 +18,7 @@ interface Detalle {
   motivosOriginales: string[] | null;
   corregidaManualmente: boolean;
   corregidaPor: string | null;
+  rotacionAplicada: number;
   numero: string | null;
   fecha: string | null;
   proveedor: string | null;
@@ -125,7 +126,8 @@ function Campo({ etiqueta, valor, cambiar, ancho = "", tipo = "text", prueba }: 
 function FormularioFactura({ detalle }: { detalle: Detalle }) {
   const router = useRouter();
   const [c, setC] = useState<Campos>(() => camposDesde(detalle));
-  const [rotacion, setRotacion] = useState(0);
+  // Si la máquina tuvo que enderezarla, se muestra ya derecha.
+  const [rotacion, setRotacion] = useState(detalle.rotacionAplicada ?? 0);
   const [zoom, setZoom] = useState(false);
   const [confirmado, setConfirmado] = useState(false);
   const [guardando, setGuardando] = useState(false);

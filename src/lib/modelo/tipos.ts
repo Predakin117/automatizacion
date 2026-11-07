@@ -56,6 +56,8 @@ export interface Factura {
   archivo: string; // nombre original
   rutaArchivo: string; // ruta en el bucket de Supabase
   confianzaOcr: number | null;
+  /** Grados (horario) que se giró la imagen para leerla (enderezado automático); 0 si venía derecha. */
+  rotacionAplicada?: number;
   procesoId: string;
   uid: string;
   creadoEn: Timestamp;

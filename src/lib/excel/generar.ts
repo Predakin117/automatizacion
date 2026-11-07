@@ -70,6 +70,7 @@ export async function generarExcel(procesoId: string, proceso: Proceso): Promise
     { header: "Estado", key: "estado", width: 11 },
     { header: "Motivos", key: "motivos", width: 60 },
     { header: "Confianza OCR", key: "confianza", width: 10 },
+    { header: "Giro aplicado (°)", key: "giro", width: 10 },
   ];
   for (const f of facturas) {
     hf.addRow({
@@ -87,6 +88,7 @@ export async function generarExcel(procesoId: string, proceso: Proceso): Promise
       estado: f.corregidaManualmente ? "aceptada (manual)" : f.estado,
       motivos: (f.motivos ?? []).join("; "),
       confianza: f.confianzaOcr,
+      giro: f.rotacionAplicada ?? 0,
     });
   }
   encabezado(hf);

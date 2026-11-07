@@ -48,6 +48,7 @@ async function procesarArchivo(procesoId: string, uid: string, a: Reclamado, r: 
       parcial: leida.parcial,
       motivos: leida.motivos,
       confianza: leida.confianza,
+      rotacion: leida.rotacion,
     });
     if (resultado === "aceptada") r.aceptadas++;
     else if (resultado === "revision") r.revision++;

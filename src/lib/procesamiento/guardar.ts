@@ -17,6 +17,8 @@ export interface DatosGuardado {
   parcial: ParcialFactura;
   motivos: string[];
   confianza: number | null;
+  /** Giro que se aplicó para leer la imagen (0 si venía derecha). */
+  rotacion: number;
 }
 
 export type ResultadoGuardado = "aceptada" | "revision" | "duplicada";
@@ -86,6 +88,7 @@ export async function guardarFactura(d: DatosGuardado): Promise<ResultadoGuardad
       archivo: d.nombre,
       rutaArchivo: d.rutaArchivo,
       confianzaOcr: d.confianza,
+      rotacionAplicada: d.rotacion,
       procesoId: d.procesoId,
       uid: d.uid,
       creadoEn: ahora,
@@ -150,7 +153,7 @@ export async function marcarDuplicada(procesoId: string, idCola: string, hash: s
  * revisión con el motivo del error (no se pierde; una persona la ingresa a mano).
  */
 export async function guardarFallo(
-  d: Omit<DatosGuardado, "parcial" | "motivos" | "confianza" | "hash"> & { hash: string | null; error: string },
+  d: Omit<DatosGuardado, "parcial" | "motivos" | "confianza" | "hash" | "rotacion"> & { hash: string | null; error: string },
 ): Promise<void> {
   const colaRef = refCola(d.procesoId).doc(d.idCola);
   const procesoRef = refProceso(d.procesoId);

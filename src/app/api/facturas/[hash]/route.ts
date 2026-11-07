@@ -23,6 +23,7 @@ export async function GET(request: Request, ctx: RouteContext<"/api/facturas/[ha
     motivosOriginales: f.motivosOriginales ?? null,
     corregidaManualmente: f.corregidaManualmente ?? false,
     corregidaPor: f.corregidaPor ?? null,
+    rotacionAplicada: f.rotacionAplicada ?? 0,
     numero: f.numero,
     fecha: f.fecha,
     proveedor: f.proveedor,

@@ -61,7 +61,14 @@ Estimado por factura procesada: ~5 lecturas y ~6 escrituras. Por tanto, **1000 f
 - `probar-http` con 20 facturas: subida en 2,5 s; 18 aceptadas y 2 a revisión. La suma del Excel coincide con Firestore. El reproceso da 20 de 20 duplicadas y no cambia los conteos. La caída simulada se retoma sin duplicar.
 - `probar-ui` con 20 facturas en 2 lotes: 62 s en total, retraso máximo del navegador de 16 ms y 0 errores de consola. Sin scroll horizontal a 390 px de ancho.
 
-## 7. Pendiente para cerrar la fase
+## 7. Enderezado automático de imágenes giradas (decisión del 2026-11-07)
+
+Si la lectura original sale **ilegible** (1 campo clave o ninguno entre número, fecha, NIT, subtotal y total), el sistema prueba giros de 90°, 270° y 180°. Sigue con la orientación que mejor se lea, y el giro queda en `facturas.rotacionAplicada`, en el Excel y en la tabla del lote. Las imágenes derechas no pagan ningún costo extra. Una girada cuesta de 1 a 3 lecturas más, unos 3 a 8 s en local.
+
+- **Se aparta de la guía.** La guía manda las 10 facturas giradas a propósito **siempre** a revisión. Por decisión del estudiante, ahora se enderezan y, si todo cuadra, quedan **aceptadas**. A revisión van las que de verdad necesitan a una persona, como las borrosas. Por eso la cifra de «como mínimo 40 en revisión» baja a unas 30.
+- **Medido** con `scripts/probar-giro.ts`: 4 facturas de diseños distintos, giradas a propósito 90°, 180° y 270°. Las 12 se enderezaron, se aceptaron y conservaron su número. La factura 0189, girada de origen, ahora queda aceptada. La 0141 no estaba girada: su problema es de calidad y sigue en revisión.
+
+## 8. Pendiente para cerrar la fase
 
 1. Confirmar el hosting con el profesor. Si es Vercel: importar el repositorio, definir las variables (sección 1) y hacer push.
 2. Contra la URL desplegada: `probar-auth`, `probar-http` con 20 facturas (esta es la verificación de la Fase 5: OCR dentro de la función) y revisar `GET /api/salud`.
