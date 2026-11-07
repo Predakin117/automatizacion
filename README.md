@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Procesador de facturas
 
-## Getting Started
+Clase «Tendencias en desarrollo de software», tema **automatización**. Lee facturas electrónicas colombianas (imágenes) con OCR, valida sus datos, los guarda en Firestore y genera un Excel por lote. Lo que la máquina no puede aceptar va a **revisión manual**.
 
-First, run the development server:
+- **Next.js 16** (App Router), desplegable en **Vercel** (plan Hobby).
+- **Firebase**: Firestore (datos, solo desde el servidor) y Authentication (correo y contraseña).
+- **Supabase Storage** (bucket privado) para las imágenes y los Excel. Reemplaza a Vercel Blob por decisión del profesor.
+- **tesseract.js** (OCR), **sharp**, **exceljs**, **zod**.
+
+La guía paso a paso está en [AGENTS.md](AGENTS.md) / [CLAUDE.md](CLAUDE.md). La operación (cuotas, archivos y despliegue) está en [docs/operacion.md](docs/operacion.md).
+
+## Empezar
 
 ```bash
+npm install
+cp .env.example .env              # y rellena los valores (nunca los subas a Git)
+npx tsx scripts/probar-conexion.ts # Firestore OK, Auth OK, Storage OK
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Comprobaciones
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Comando | Qué demuestra |
+|---|---|
+| `npm run lint` · `npx tsc --noEmit` · `npm test` | antes de cada commit (35 pruebas unitarias) |
+| `npx tsx scripts/verificar-reglas.ts` | las reglas de Firestore niegan todo acceso anónimo |
+| `npx tsx scripts/probar-auth.ts <url>` | todas las rutas exigen sesión; 403 para correos no autorizados |
+| `npx tsx scripts/leer-carpeta.ts <imágenes> [verdad.json] --desde N --cantidad N` | mide el extractor sin base de datos |
+| `npx tsx scripts/probar-http.ts <url> <imágenes> [cantidad]` | subida validada, cola, lotes concurrentes, Excel, reproceso idempotente y caída simulada |
+| `npx tsx scripts/probar-ui.ts <url> <imágenes> <porLote> <capturas>` | interfaz con navegador real (Edge instalado) |
+| `npx tsx scripts/probar-correccion.ts` | transacción de la revisión manual contra Firestore |
+| `npx tsx scripts/probar-revision-ui.ts <url> <imágenes> <capturas>` | revisión manual con navegador real |
+| `npx tsx scripts/limpiar-lotes.ts <idLote> …` | borra **solo** los lotes indicados |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Las pruebas que escriben en Firestore o en el almacén **limpian solo lo que crearon**. Ninguna pulsa «Borrar todo».

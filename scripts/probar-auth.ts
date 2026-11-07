@@ -19,11 +19,25 @@ async function main(): Promise<void> {
   const base = (process.argv[2] ?? "http://localhost:3000").replace(/\/$/, "");
   console.log(`Probando ${base}\n`);
 
-  // 1. Sin sesión
-  for (const ruta of ["/api/procesos", "/api/salud", "/api/sesion"]) {
-    const r = await fetch(base + ruta);
-    comprobar(`sin cookie GET ${ruta}`, r.status === 401, String(r.status));
+  // 1. Sin sesión: TODAS las rutas de la API responden 401 (Fase D).
+  const lote = "LoteDePrueba123";
+  const hash = "0".repeat(64);
+  const rutas: [string, string][] = [
+    ["GET", "/api/salud"], ["GET", "/api/sesion"],
+    ["GET", "/api/procesos"], ["POST", "/api/procesos"], ["GET", `/api/procesos/${lote}`],
+    ["POST", `/api/procesos/${lote}/imagenes?indice=0&nombre=a.png`], ["POST", `/api/procesos/${lote}/iniciar`],
+    ["POST", `/api/procesos/${lote}/lote`], ["POST", `/api/procesos/${lote}/finalizar`],
+    ["GET", `/api/procesos/${lote}/excel`], ["GET", `/api/procesos/${lote}/facturas`],
+    ["POST", `/api/procesos/${lote}/regenerar-excel`], ["GET", "/api/metricas"],
+    ["GET", "/api/facturas"], ["GET", `/api/facturas/${hash}`], ["PUT", `/api/facturas/${hash}`],
+    ["GET", `/api/facturas/${hash}/imagen`], ["POST", "/api/datos/borrar"],
+  ];
+  const abiertas: string[] = [];
+  for (const [metodo, ruta] of rutas) {
+    const r = await fetch(base + ruta, { method: metodo, body: metodo === "GET" ? undefined : "{}", headers: { "content-type": "application/json" } });
+    if (r.status !== 401) abiertas.push(`${metodo} ${ruta} → ${r.status}`);
   }
+  comprobar(`sin cookie: las ${rutas.length} rutas de la API dan 401`, abiertas.length === 0, abiertas.join(", "));
   const pagina = await fetch(base + "/", { redirect: "manual" });
   comprobar(
     "sin cookie GET / redirige a /login",
